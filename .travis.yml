@@ -31,6 +31,8 @@ jobs:
             - libfuse2:i386
             - zlib1g:i386
             - libfreetype6-dev:i386
+            - libsdl2-dev:i386 
+            - libfontconfig-dev:i386
       before_script:
         - export ARCH=i686
       script:
@@ -40,7 +42,7 @@ jobs:
             - 7z a -t7z $TRAVIS_BUILD_DIR/tf15-client-linux-i386.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
       after_script:
         - ccache --show-stats
-        - ls -la
+        - ls -la *.7z
 #        - sh scripts/continious_upload.sh xash3d-fwgs-${ARCH}.AppImage xashds-linux-${ARCH}
     - # ...
       name: "Build for Android"
@@ -65,7 +67,8 @@ jobs:
         - sh compile-android.sh
       after_script:
         - ccache --show-stats
-        - ls -la
+        - ls -la tf15-client.apk
+        
 #    - stage: deploy
 #      name: "Deploy to github repo"
 #      os: linux
