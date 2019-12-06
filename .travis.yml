@@ -82,11 +82,11 @@ jobs:
             - echo "Building for Windows with MSVC"
       script:
             - ./waf.bat -T debug configure
-            - ./waf.bat build
+            - ./waf.bat build -v
             - mv */*/*.dll .
             - tar -cvf tf15-client-windows-i386.tar menu.dll client.dll
       after_script:
         - ccache --show-stats
         - ls -la *.tar
         - wget -O upload.sh "https://raw.githubusercontent.com/FWGS/uploadtool/master/upload.sh"
-        - bash upload.sh tf15-client-windows-i386.7z
+        - bash upload.sh tf15-client-windows-i386.tar
