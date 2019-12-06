@@ -1,5 +1,8 @@
 .vscode/
 *.o
+*.apk
+*/*.apk
+*/*/*.apk
 *.so
 */*.o
 */*/*.o
@@ -8,7 +11,7 @@
 *.exe
 *.dll
 *.pdb
-build/
+build*
 CMakeLists.txt.user
 cmake_install.cmake
 *.orig

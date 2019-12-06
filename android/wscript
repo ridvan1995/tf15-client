@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+# encoding: utf-8
+# a1batross, 2019
+
+def options(opt):
+	# opt.load('java')
+	opt.load('android')
+	grp = opt.add_option_group('Common options')
+	grp.add_option('-T', '--build-type', action='store', dest='BUILD_TYPE', default = None,
+		help = 'build type: debug, release or none(custom flags)')
+	return
+
+def configure(conf):
+	conf.load('android')
+	conf.start_msg('Build type')
+	if conf.options.BUILD_TYPE == None:
+		conf.end_msg('not set', color='RED')
+		conf.fatal('Please set a build type, for example "--build-type=release"')
+	elif not conf.options.BUILD_TYPE in ['release', 'debug', 'none']:
+		conf.end_msg(conf.options.BUILD_TYPE, color='RED')
+		conf.fatal('Invalid build type. Valid are "debug", "release" or "none"')
+	conf.end_msg(conf.options.BUILD_TYPE)
+
+	conf.env.D8_DEBUG = conf.options.BUILD_TYPE != 'release'
+	# conf.load('java')
+	return
+
+def build(bld):
+	bld(features = 'android javac',
+		srcdir = 'src',
+		compat = '1.6',
+		name = 'tf15-client',
+		jni = 'lib',
+		keystore = bld.path.parent.find_node('android/debug.keystore'),
+#		keystore = 'android/debug.keystore',
+		debug = bld.env.D8_DEBUG,
+		target_api = 19)
+	return
