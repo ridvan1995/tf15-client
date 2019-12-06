@@ -46,6 +46,9 @@ def options(opt):
 	grp.add_option('--enable-simple-mod-hacks', action = 'store_true', dest = 'ENABLE_MOD_HACKS', default = False,
 		help = 'enable hacks for simple mods that mostly compatible with Half-Life but has little changes. Enforced for Android. [default: %default]')
 
+	grp.add_option('--low-memory-mode', action = 'store', dest = 'LOW_MEMORY', default = 0, type = 'int',
+		help = 'enable low memory mode (only for devices have <128 ram)')
+
 	opt.load('xcompile compiler_cxx compiler_c clang_compilation_database strip_on_install')
 
 	if sys.platform == 'win32':
