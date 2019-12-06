@@ -32,6 +32,7 @@ jobs:
             - zlib1g:i386
             - libfreetype6-dev:i386
             - libfontconfig-dev:i386
+	    - p7zip-full
       before_script:
         - export ARCH=i686
       script:
