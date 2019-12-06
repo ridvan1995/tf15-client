@@ -81,8 +81,8 @@ jobs:
       before_script:
             - echo "Building for Windows with MSVC"
       script:
-            - ./waf -T debug configure
-            - ./waf build
+            - ./waf.bat -T debug configure
+            - ./waf.bat build
             - mv */*/*.dll .
             - tar -cvf tf15-client-windows-i386.tar menu.dll client.dll
       after_script:
