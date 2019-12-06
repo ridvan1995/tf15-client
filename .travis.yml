@@ -9,7 +9,10 @@ git:
   submodules: true
 jdk:
   - oraclejdk8
-
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)$/
 jobs:
   include:
     - stage: build
@@ -43,8 +46,9 @@ jobs:
       after_script:
         - ccache --show-stats
         - ls -la *.7z
-#        - sh scripts/continious_upload.sh xash3d-fwgs-${ARCH}.AppImage xashds-linux-${ARCH}
-    - # ...
+        - wget -O upload.sh "https://raw.githubusercontent.com/FWGS/uploadtool/master/upload.sh"
+        - bash upload.sh tf15-client-linux-i386.7z
+- # ...      
       name: "Build for Android"
       cache: ccache
       os: linux
@@ -68,10 +72,5 @@ jobs:
       after_script:
         - ccache --show-stats
         - ls -la tf15-client.apk
-        
-#    - stage: deploy
-#      name: "Deploy to github repo"
-#      os: linux
-#      cache: false
-#      script:
-#        - sh scripts/travis-deploy.sh xash3d-fwgs-i686.AppImage xash3d-fwgs-x86_64.AppImage xash3d-vc.7z xash3d-vc2008-sln.7z xashdroid.apk xashds-linux-i686 xashds-linux-x86_64
+        - wget -O upload.sh "https://raw.githubusercontent.com/FWGS/uploadtool/master/upload.sh"
+        - bash upload.sh tf15-client.apk
