@@ -48,8 +48,8 @@ jobs:
         - ls -la *.7z
         - wget -O upload.sh "https://raw.githubusercontent.com/FWGS/uploadtool/master/upload.sh"
         - bash upload.sh tf15-client-linux-i386.7z
-- # ...
-      name: "Build for Android"
+
+    - name: "Build for Android"
       cache: ccache
       os: linux
       dist: xenial
