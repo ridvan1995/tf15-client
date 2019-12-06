@@ -1,16 +1,73 @@
-language: cpp
-compiler: 
-  - gcc
-  - clang
-os:
-  - linux
-  - osx
-sudo: true
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install gcc-multilib g++-multilib; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CC" == "gcc" ]]; then sudo apt-get install mingw-w64-i686-dev binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686; fi
-script:
-  - mkdir -p build && cd build
-  - cmake ../ -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VOICEMGR=0 && make -j3 && rm -rf *
-  - cmake ../ -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VOICEMGR=1 && make -j3 && rm -rf *
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CC" == "gcc" ]]; then cd ..; mkdir build-mingw; cd build-mingw; cmake ../ -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ && make -j3; fi
+language: c
+compiler: gcc
+sudo: false
+env:
+  global:
+    - SDL_VERSION=2.0.8
+git:
+  depth: 50
+  submodules: true
+jdk:
+  - oraclejdk8
+
+jobs:
+  include:
+    - stage: build
+      name: "Build for Linux i686"
+      cache: ccache
+      os: linux
+      dist: xenial
+      addons:
+        apt:
+          packages:
+            - gcc-multilib
+            - g++-multilib
+            - libx11-dev:i386
+            - libxext-dev:i386
+            - x11-utils
+            - libgl1-mesa-dev
+            - libasound-dev
+            - libstdc++6:i386
+            - libfuse2:i386
+            - zlib1g:i386
+      before_script:
+        - export ARCH=i686
+      script:
+            - ./waf -T debug configure
+            - ./waf build
+            - mv */*/*.so .
+            - 7z a -t7z $TRAVIS_BUILD_DIR/tf15-client-linux-i386.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
+      after_script:
+        - ccache --show-stats
+        - ls -la
+#        - sh scripts/continious_upload.sh xash3d-fwgs-${ARCH}.AppImage xashds-linux-${ARCH}
+    - # ...
+      name: "Build for Android"
+      cache: ccache
+      os: linux
+      dist: xenial
+      language: java # we want xenial, so just java, not android
+      jdk: openjdk8
+      before_script:
+        - export ANDROID_HOME=$TRAVIS_BUILD_DIR/sdk
+        - export ANDROID_SDK_HOME=$ANDROID_HOME
+        - export ANDROID_NDK_HOME=$ANDROID_SDK_HOME/ndk-bundle
+        - cd $TRAVIS_BUILD_DIR
+        - mkdir -p sdk && cd sdk
+        - wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -qO sdk.zip > /dev/null 2>/dev/null || exit 1
+        - unzip sdk.zip > /dev/null 2>/dev/null
+        - cd $TRAVIS_BUILD_DIR
+        - yes | sdk/tools/bin/sdkmanager --licenses > /dev/null 2>/dev/null
+        - sdk/tools/bin/sdkmanager --install build-tools\;29.0.1 platform-tools platforms\;android-19 ndk-bundle > /dev/null 2>/dev/null
+      script:
+        - cd $TRAVIS_BUILD_DIR
+        - sh compile-android.sh
+      after_script:
+        - ccache --show-stats
+        - ls -la
+#    - stage: deploy
+#      name: "Deploy to github repo"
+#      os: linux
+#      cache: false
+#      script:
+#        - sh scripts/travis-deploy.sh xash3d-fwgs-i686.AppImage xash3d-fwgs-x86_64.AppImage xash3d-vc.7z xash3d-vc2008-sln.7z xashdroid.apk xashds-linux-i686 xashds-linux-x86_64
