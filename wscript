@@ -52,7 +52,7 @@ def options(opt):
 		opt.load('msvc msdev msvs')
 
 	opt.load('reconfigure subproject')
-	opt.add_subproject(["cl_dll", "mainui", "dlls"])
+	opt.add_subproject(["cl_dll", "mainui"])
 
 def configure(conf):
 	# Configuration
@@ -265,10 +265,10 @@ def configure(conf):
 		if conf.env.cxxshlib_PATTERN.startswith('lib'):
 			conf.env.cxxshlib_PATTERN = conf.env.cxxshlib_PATTERN[3:]
 
-	conf.add_subproject(["cl_dll", "mainui", "dlls"])
+	conf.add_subproject(["cl_dll", "mainui"])
 
 def build(bld):
-	bld.add_subproject(["cl_dll", "mainui", "dlls"])
+	bld.add_subproject(["cl_dll", "mainui"])
 
 
 
