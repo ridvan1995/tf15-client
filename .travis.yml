@@ -74,3 +74,19 @@ jobs:
         - ls -la tf15-client.apk
         - wget -O upload.sh "https://raw.githubusercontent.com/FWGS/uploadtool/master/upload.sh"
         - bash upload.sh tf15-client.apk
+        
+    - name: "Build for Windows MSVC"
+      cache: ccache
+      os: windows
+      before_script:
+            - echo "Building for Windows with MSVC"
+      script:
+            - ./waf -T debug configure
+            - ./waf build
+            - mv */*/*.dll .
+            - tar -cvf tf15-client-windows-i386.tar menu.dll client.dll
+      after_script:
+        - ccache --show-stats
+        - ls -la *.tar
+        - wget -O upload.sh "https://raw.githubusercontent.com/FWGS/uploadtool/master/upload.sh"
+        - bash upload.sh tf15-client-windows-i386.7z
