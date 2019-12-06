@@ -31,7 +31,6 @@ jobs:
             - libfuse2:i386
             - zlib1g:i386
             - libfreetype6-dev:i386
-            - libsdl2-dev:i386 
             - libfontconfig-dev:i386
       before_script:
         - export ARCH=i686
