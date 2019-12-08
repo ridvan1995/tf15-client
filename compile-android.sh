@@ -13,7 +13,7 @@ else
 fi
 
 if [ -z "$ARCHS" ]; then
-	ARCHS="armeabi-v7a x86"
+	ARCHS="armeabi-v7a x86 aarch64"
 fi
 
 if [ -z "$API" ]; then
